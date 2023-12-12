@@ -11,10 +11,8 @@ const port = process.env.PORT || 5000;
 const username=process.env.MONGODB_USERNAME;
 const password=process.env.MONGODB_PASSWORD;
 
-// Connect to MongoDB 
 const connect=mongoose.connect(`mongodb://localhost:27017/RegistrationForm`);
 
-//check the database connected or not
  connect.then(()=>{
     console.log("Connected to MongoDB");
 })
@@ -24,7 +22,6 @@ const connect=mongoose.connect(`mongodb://localhost:27017/RegistrationForm`);
 
 app.use(express.static('public'));
 
-// Create a mongoose schema and model
 const userSchema = new mongoose.Schema({
     username: String,
     email: String,
@@ -33,7 +30,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('users', userSchema);
 
-// Middleware to parse form data
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -41,13 +37,11 @@ app.get("/",(req, res) => {
     res.sendFile(__dirname + '/views/index.html');
 })
 
-// Handle form submissions
 app.post('/signup', async (req, res) => {
     try{
     const { username, email, password } = req.body;
     const existingUser = await User.findOne({email : email});
 
-    // Check if the user with the entered email already exists
     if (!existingUser){
     const registrationData = new User({
         username,
@@ -67,7 +61,6 @@ app.post('/signup', async (req, res) => {
     }
 })  
 
-// Serve the HTML file
 app.get('/success', (req, res) => {
     res.sendFile(__dirname + '/views/success.html');
 });
@@ -76,7 +69,6 @@ app.get('/error', (req, res) => {
         res.sendFile(__dirname + '/views/error.html');
     });
 
-// Start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
